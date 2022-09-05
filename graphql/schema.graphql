@@ -2,6 +2,7 @@
 scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 "Indicates what fields are available at the top level of a query operation."
+
 type Query {
     "Find a single user by an identifying attribute."
     user(
@@ -19,8 +20,11 @@ type Query {
     ): [User!]! @paginate(defaultCount: 10)
 
     posts: [Posts!]! @paginate(defaultCount: 10)
+    postsResolver: [Posts!]! 
+    postResolver(id:ID! @eq): Posts! 
     post(id: ID @eq): Posts @find
 }
+
 
 "Account of a person who utilizes this application."
 type User {
