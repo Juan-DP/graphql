@@ -1,30 +1,31 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
-scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar DateTime
+    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 "Indicates what fields are available at the top level of a query operation."
-
 type Query {
     "Find a single user by an identifying attribute."
     user(
-      "Search by primary key."
-      id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
+        "Search by primary key."
+        id: ID @eq @rules(apply: ["prohibits:email", "required_without:email"])
 
-      "Search by email address."
-      email: String @eq @rules(apply: ["prohibits:id", "required_without:id", "email"])
+        "Search by email address."
+        email: String
+            @eq
+            @rules(apply: ["prohibits:id", "required_without:id", "email"])
     ): User @find
 
     "List multiple users."
     users(
-      "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
-      name: String @where(operator: "like")
+        "Filters by name. Accepts SQL LIKE wildcards `%` and `_`."
+        name: String @where(operator: "like")
     ): [User!]! @paginate(defaultCount: 10)
 
     posts: [Posts!]! @paginate(defaultCount: 10)
-    postsResolver: [Posts!]! 
-    postResolver(id:ID! @eq): Posts! 
+    postsResolver: [Posts!]!
+    postResolver(id: ID! @eq): Posts!
     post(id: ID @eq): Posts @find
 }
-
 
 "Account of a person who utilizes this application."
 type User {
@@ -34,7 +35,7 @@ type User {
     "Non-unique name."
     name: String!
 
-    posts:[Posts!]! @hasMany
+    posts: [Posts!]! @hasMany
 
     "Unique email address."
     email: String!
@@ -55,7 +56,7 @@ type Posts {
     "Non-unique name."
     title: String!
 
-    user:User! @belongsTo
+    user: User! @belongsTo
 
     "Unique email address."
     body: String!
@@ -67,18 +68,46 @@ type Posts {
     updated_at: DateTime!
 }
 
+type Schedule {
+    "Unique primary key."
+    id: ID!
+
+    "Non-unique name."
+    start_hour: DateTime!
+
+    end_hour: DateTime!
+
+    "Unique email address."
+    description: String!
+
+    "When the account was created."
+    created_at: DateTime!
+
+    "When the account was last updated."
+    updated_at: DateTime!
+}
+
 type Mutation {
-  createPost(
-    title: String! @rules(apply: ["required", "min:3"]),
-    user_id: ID!,
-    body:   String!@rules(apply: ["required", "min:10"]),
-  ): Posts @create   
-  updatePost(
-    title: String! @rules(apply: ["required", "min:3"]),
-    id: ID!,
-    body:   String!@rules(apply: ["required", "min:10"]),
-  ): Posts @update 
-  deletePost(
-    id: ID!,
-  ): Posts @delete 
+    # Posts
+    createPost(
+        title: String! @rules(apply: ["required", "min:3"])
+        user_id: ID!
+        body: String! @rules(apply: ["required", "min:10"])
+    ): Posts @create
+
+    updatePost(
+        title: String! @rules(apply: ["required", "min:3"])
+        id: ID!
+        body: String! @rules(apply: ["required", "min:10"])
+    ): Posts @update
+
+    deletePost(id: ID!): Posts @delete
+    # Users
+      createUser(id: ID, name:String!, email:String!, created_at:DateTime!,updated_at:DateTime!) @create;
+      updateUser(id: ID, name:String!, email:String!, created_at:DateTime!,updated_at:DateTime!) @update;
+      deleteUser(id: ID) @delete;
+    # Schedule
+      createSchedule(id: ID, start_hour:DateTime!,end_hour:DateTime!, created_at:DateTime!,updated_at:DateTime!) @create;
+      updateSchedule(id: ID, start_hour:DateTime!,end_hour:DateTime!, created_at:DateTime!,updated_at:DateTime!) @update;
+      deleteSchedule(id: ID) @delete;
 }
