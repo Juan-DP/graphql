@@ -62,3 +62,19 @@ type Posts {
     "When the account was last updated."
     updated_at: DateTime!
 }
+
+type Mutation {
+  createPost(
+    title: String! @rules(apply: ["required", "min:3"]),
+    user_id: ID!,
+    body:   String!@rules(apply: ["required", "min:10"]),
+  ): Posts @create   
+  updatePost(
+    title: String! @rules(apply: ["required", "min:3"]),
+    id: ID!,
+    body:   String!@rules(apply: ["required", "min:10"]),
+  ): Posts @update 
+  deletePost(
+    id: ID!,
+  ): Posts @delete 
+}
