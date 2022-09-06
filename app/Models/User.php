@@ -45,4 +45,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Posts::class);
     }
+
+    public function schedules()
+    {
+        return $this->belongsTo(Schedule::class);
+    }
 }

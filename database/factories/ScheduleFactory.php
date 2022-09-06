@@ -1,7 +1,7 @@
 <?php
-
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +17,9 @@ class ScheduleFactory extends Factory
     public function definition()
     {
         return [
+            'user_id'    => User::factory(),
             'start_date' => $this->faker->dateTime(),
-            'end_date' => $this->faker->dateTime(),
+            'end_date'   => $this->faker->dateTime(),
         ];
     }
 }

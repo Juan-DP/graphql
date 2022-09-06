@@ -1,6 +1,5 @@
 "A datetime string with format `Y-m-d H:i:s`, e.g. `2018-05-23 13:43:32`."
-scalar DateTime
-    @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
+scalar DateTime @scalar(class: "Nuwave\\Lighthouse\\Schema\\Types\\Scalars\\DateTime")
 
 "Indicates what fields are available at the top level of a query operation."
 type Query {
@@ -25,6 +24,12 @@ type Query {
     postsResolver: [Posts!]!
     postResolver(id: ID! @eq): Posts!
     post(id: ID @eq): Posts @find
+
+    # Schedule
+    schedule(id:ID! @eq):Schedule @find
+    schedules:[Schedule!]! @paginate(defaultCount:10)
+
+
 }
 
 "Account of a person who utilizes this application."
@@ -36,6 +41,8 @@ type User {
     name: String!
 
     posts: [Posts!]! @hasMany
+
+    schedule: [Schedule!]! @hasMany
 
     "Unique email address."
     email: String!
@@ -72,10 +79,11 @@ type Schedule {
     "Unique primary key."
     id: ID!
 
+    user: User! @belongsTo
     "Non-unique name."
-    start_hour: DateTime!
+    start_date: DateTime!
 
-    end_hour: DateTime!
+    end_date: DateTime!
 
     "Unique email address."
     description: String!
@@ -102,12 +110,12 @@ type Mutation {
     ): Posts @update
 
     deletePost(id: ID!): Posts @delete
-    # Users
-      createUser(id: ID, name:String!, email:String!, created_at:DateTime!,updated_at:DateTime!) @create;
-      updateUser(id: ID, name:String!, email:String!, created_at:DateTime!,updated_at:DateTime!) @update;
-      deleteUser(id: ID) @delete;
+    # Users      
+    createUser(id: ID, name:String!, email:String!, created_at:DateTime!,updated_at:DateTime!): User @create
+      updateUser(id: ID, name:String!, email:String!, created_at:DateTime!,updated_at:DateTime!): User @update
+      deleteUser(id: ID!): User @delete
     # Schedule
-      createSchedule(id: ID, start_hour:DateTime!,end_hour:DateTime!, created_at:DateTime!,updated_at:DateTime!) @create;
-      updateSchedule(id: ID, start_hour:DateTime!,end_hour:DateTime!, created_at:DateTime!,updated_at:DateTime!) @update;
-      deleteSchedule(id: ID) @delete;
+      createSchedule(id: ID, start_date:DateTime!,end_date:DateTime!, description: String!, created_at:DateTime!,updated_at:DateTime!):Schedule @create
+      updateSchedule(id: ID, start_date:DateTime!,end_date:DateTime!, description: String!, created_at:DateTime!,updated_at:DateTime!):Schedule @update
+      deleteSchedule(id: ID!):Schedule @delete
 }
